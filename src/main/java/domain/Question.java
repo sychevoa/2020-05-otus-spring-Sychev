@@ -9,12 +9,9 @@ import java.util.Objects;
 @Getter
 @AllArgsConstructor
 public class Question {
-    private int id;
-    private String text;
+    private final int id;
+    private final String text;
     private List<String> possibleAnswers;
-
-    public Question() {
-    }
 
     public Question(int id, String text) {
         this.id = id;
