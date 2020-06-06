@@ -120,12 +120,9 @@ public class QuestionDaoImpl implements QuestionDao {
         String text = questionAsArray[1];
 
         Question question;
-        if (questionAsArray.length > 2) {
-            List<String> answers = List.of(Arrays.copyOfRange(questionAsArray, 2, questionAsArray.length));
-            question = new Question(id, text, answers);
-        } else {
-            question = new Question(id, text);
-        }
+        List<String> answers = List.of(Arrays.copyOfRange(questionAsArray, 2, questionAsArray.length));
+        question = new Question(id, text, answers);
+
         return question;
     }
 }
