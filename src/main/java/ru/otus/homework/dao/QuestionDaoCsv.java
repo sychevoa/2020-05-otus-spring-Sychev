@@ -1,9 +1,14 @@
-package service;
+package ru.otus.homework.dao;
 
-import domain.Question;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.io.FileUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.stereotype.Service;
+import ru.otus.homework.config.AppConfig;
+import ru.otus.homework.domain.Answer;
+import ru.otus.homework.domain.Question;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,18 +18,16 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
-@AllArgsConstructor
-public class QuestionServiceImpl implements QuestionService {
-
-    private final String fileName;
+@Service
+public class QuestionDaoCsv implements QuestionDao {
 
     @Override
-    public List<Question> getAllQuestionsFromCsv() {
+    public List<Question> getAllQuestions(String pathToResource) {
         Scanner scanner;
         List<Question> questions = new ArrayList<>();
 
         try {
-            scanner = new Scanner(createFileFromResource(fileName));
+            scanner = new Scanner(createFileFromResource(pathToResource));
 
             while (scanner.hasNext()) {
                 Question question = returnQuestionFromString(scanner.nextLine());
@@ -33,7 +36,30 @@ public class QuestionServiceImpl implements QuestionService {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
         return questions;
+    }
+
+    @Override
+    public List<Answer> getAllAnswers(String pathToResource) {
+        Scanner scanner;
+        List<Answer> answersList = new ArrayList<>();
+
+        try {
+            scanner = new Scanner(createFileFromResource(pathToResource));
+
+            while (scanner.hasNext()) {
+                String s = scanner.nextLine();
+                String[] split = s.split(",");
+
+                Answer answer = new Answer(Integer.parseInt(split[0]), split[1]);
+                answersList.add(answer);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return answersList;
     }
 
     private File createFileFromResource(String fileName) throws IOException {
@@ -51,12 +77,9 @@ public class QuestionServiceImpl implements QuestionService {
         String text = questionAsArray[1];
 
         Question question;
-        if (questionAsArray.length > 2) {
-            List<String> answers = List.of(Arrays.copyOfRange(questionAsArray, 2, questionAsArray.length));
-            question = new Question(id, text, answers);
-        } else {
-            question = new Question(id, text);
-        }
+        List<String> answers = List.of(Arrays.copyOfRange(questionAsArray, 2, questionAsArray.length));
+        question = new Question(id, text, answers);
+
         return question;
     }
 }
