@@ -1,10 +1,7 @@
 package ru.otus.homework.service;
 
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import ru.otus.homework.config.AppConfig;
 import ru.otus.homework.dao.QuestionDao;
@@ -12,10 +9,6 @@ import ru.otus.homework.domain.Answer;
 import ru.otus.homework.domain.PersonData;
 import ru.otus.homework.domain.Question;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.atomic.AtomicInteger;

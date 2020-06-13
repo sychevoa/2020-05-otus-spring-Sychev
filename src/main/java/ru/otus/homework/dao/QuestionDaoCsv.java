@@ -1,12 +1,8 @@
 package ru.otus.homework.dao;
 
-import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import org.apache.commons.io.FileUtils;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
-import ru.otus.homework.config.AppConfig;
 import ru.otus.homework.domain.Answer;
 import ru.otus.homework.domain.Question;
 
