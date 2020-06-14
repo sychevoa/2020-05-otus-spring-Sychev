@@ -2,6 +2,7 @@ package ru.otus.homework.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import ru.otus.homework.config.AppConfig;
 import ru.otus.homework.dao.QuestionDao;
@@ -10,6 +11,7 @@ import ru.otus.homework.domain.PersonData;
 import ru.otus.homework.domain.Question;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Scanner;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -23,8 +25,12 @@ public class QuestionServiceCsv implements QuestionService {
     @Value("${source.answers}")
     private String answersCsv;
 
+    @Value("${locale}")
+    private String locale;
+
     private final QuestionDao questionDao;
     private final AppConfig appConfig;
+    private final MessageSource messageSource;
 
     @Override
     public void runQuiz() {
@@ -36,10 +42,13 @@ public class QuestionServiceCsv implements QuestionService {
     }
 
     private PersonData askAndReturnPersonData() {
-        System.out.println("What is you first name:");
+        String askForFirstName = messageSource.getMessage("person.fist-name", null, new Locale(locale, locale));
+        System.out.println(askForFirstName);
         Scanner scanner = new Scanner(System.in);
         String firstName = scanner.nextLine();
-        System.out.println("What is you last name:");
+
+        String askForSecondName = messageSource.getMessage("person.second-name", null, new Locale(locale, locale));
+        System.out.println(askForSecondName);
         String lastName = scanner.nextLine();
 
         return new PersonData(firstName, lastName);
@@ -48,12 +57,15 @@ public class QuestionServiceCsv implements QuestionService {
     private int showQuestionsAndCalculateResult(List<Question> allQuestions) {
         Scanner scanner = new Scanner(System.in);
         AtomicInteger countOfAnswers = new AtomicInteger();
+//        String answersPath = messageSource.getMessage("source.answers", null, new Locale(locale, locale.toUpperCase()));
+
         List<Answer> allAnswers = questionDao.getAllAnswers(answersCsv);
 
         allQuestions.forEach(question -> {
             System.out.println(question);
             String userAnswer = scanner.nextLine();
-            String correctAnswer = allAnswers.get(question.getId() - 1).getText();
+            String correctAnswer = allAnswers.get(question.getId() - 1)
+                    .getText();
 
             if (userAnswer.equalsIgnoreCase(correctAnswer)) {
                 countOfAnswers.getAndIncrement();

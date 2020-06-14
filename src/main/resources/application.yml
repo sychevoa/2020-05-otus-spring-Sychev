@@ -1,8 +1,9 @@
 source:
-  questions: questions.csv
-  answers: answers.csv
+  questions: questions_${locale}.csv
+  answers: answers_${locale}.csv
 questions:
   toPass: 3
+locale: ru
 
 
     
