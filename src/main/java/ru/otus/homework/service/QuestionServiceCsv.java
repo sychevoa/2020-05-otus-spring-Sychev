@@ -38,7 +38,7 @@ public class QuestionServiceCsv implements QuestionService {
         List<Question> allQuestions = questionDao.getAllQuestions(questionsCsv);
         int result = showQuestionsAndCalculateResult(allQuestions);
 
-        System.out.println(personData + (result >= appConfig.getToPass() ? ", you have passed the test!" : ", unfortunately you failed the test!"));
+        System.out.println(getFinalPhrase(result, personData));
     }
 
     private PersonData askAndReturnPersonData() {
@@ -57,15 +57,16 @@ public class QuestionServiceCsv implements QuestionService {
     private int showQuestionsAndCalculateResult(List<Question> allQuestions) {
         Scanner scanner = new Scanner(System.in);
         AtomicInteger countOfAnswers = new AtomicInteger();
-//        String answersPath = messageSource.getMessage("source.answers", null, new Locale(locale, locale.toUpperCase()));
 
         List<Answer> allAnswers = questionDao.getAllAnswers(answersCsv);
 
         allQuestions.forEach(question -> {
-            System.out.println(question);
+            String questionTitle = messageSource.getMessage("question.title", null, new Locale(locale, locale));
+            String answerTitle = messageSource.getMessage("answer.title", null, new Locale(locale, locale));
+            System.out.println(String.format("%s %s \n%s %s", questionTitle, question.getText(), answerTitle, question.getPossibleAnswers()));
+
             String userAnswer = scanner.nextLine();
-            String correctAnswer = allAnswers.get(question.getId() - 1)
-                    .getText();
+            String correctAnswer = allAnswers.get(question.getId() - 1).getText();
 
             if (userAnswer.equalsIgnoreCase(correctAnswer)) {
                 countOfAnswers.getAndIncrement();
@@ -73,5 +74,15 @@ public class QuestionServiceCsv implements QuestionService {
         });
 
         return countOfAnswers.get();
+    }
+
+    private String getFinalPhrase(int result, PersonData personData) {
+        String finalPhrase;
+        if (result >= appConfig.getToPass()) {
+            finalPhrase = messageSource.getMessage("quiz.result-passed", new String[]{personData.toString()}, new Locale(locale, locale));
+        } else {
+            finalPhrase = messageSource.getMessage("quiz.result-failed", new String[]{personData.toString()}, new Locale(locale, locale));
+        }
+        return finalPhrase;
     }
 }
