@@ -9,6 +9,6 @@ public class PersonData {
 
     @Override
     public String toString() {
-        return "Dear, " + firstName + " " + lastName;
+        return firstName + " " + lastName;
     }
 }
