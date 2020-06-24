@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class DomainTest {
 
     @Test
-    @DisplayName("Корректно создается конструктором")
+    @DisplayName("корректно создается конструктором")
     public void shouldHaveCorrectConstructor() {
         Question question = new Question(1, "Some question", List.of("answer one", "answer two"));
 
