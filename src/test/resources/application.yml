@@ -4,10 +4,10 @@ source:
 questions:
   toPass: 3
 locale: ru
-spring:
-  shell:
-    interactive:
-      enabled: false
+#spring:
+#  shell:
+#    interactive:
+#      enabled: false
 
 
     
