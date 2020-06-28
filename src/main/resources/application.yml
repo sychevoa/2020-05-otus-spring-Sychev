@@ -1,11 +1,3 @@
-source:
-  questions: questions_${locale}.csv
-  answers: answers_${locale}.csv
-questions:
-  toPass: 3
-locale: ru
-
-
-    
-
-
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb

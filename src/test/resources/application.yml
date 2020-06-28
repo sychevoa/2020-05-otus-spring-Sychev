@@ -1,15 +1,7 @@
-source:
-  questions: questions_${locale}.csv
-  answers: answers_${locale}.csv
-questions:
-  toPass: 3
-locale: ru
-#spring:
-#  shell:
-#    interactive:
-#      enabled: false
-
-
-    
-
-
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb
+    data: data-test.sql
+  shell:
+    interactive:
+      enabled: false
