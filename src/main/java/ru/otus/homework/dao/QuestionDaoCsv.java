@@ -9,52 +9,44 @@ import ru.otus.homework.domain.Question;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Scanner;
+import java.util.stream.Stream;
 
 @Service
 public class QuestionDaoCsv implements QuestionDao {
 
     @Override
     public List<Question> getAllQuestions(String pathToResource) {
-        Scanner scanner;
         List<Question> questions = new ArrayList<>();
 
-        try {
-            scanner = new Scanner(createFileFromResource(pathToResource));
-
-            while (scanner.hasNext()) {
-                Question question = returnQuestionFromString(scanner.nextLine());
+        try (Stream<String> lines = Files.lines(createFileFromResource(pathToResource).toPath(), Charset.defaultCharset())) {
+            lines.forEachOrdered(line -> {
+                Question question = returnQuestionFromString(line);
                 questions.add(question);
-            }
+            });
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         return questions;
     }
 
     @Override
     public List<Answer> getAllAnswers(String pathToResource) {
-        Scanner scanner;
         List<Answer> answersList = new ArrayList<>();
 
-        try {
-            scanner = new Scanner(createFileFromResource(pathToResource));
-
-            while (scanner.hasNext()) {
-                String s = scanner.nextLine();
-                String[] split = s.split(",");
-
+        try (Stream<String> lines = Files.lines(createFileFromResource(pathToResource).toPath(), Charset.defaultCharset())) {
+            lines.forEachOrdered(line -> {
+                String[] split = line.split(",");
                 Answer answer = new Answer(Integer.parseInt(split[0]), split[1]);
                 answersList.add(answer);
-            }
+            });
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         return answersList;
     }
 
