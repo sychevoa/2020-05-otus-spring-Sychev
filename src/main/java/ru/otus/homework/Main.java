@@ -2,12 +2,14 @@ package ru.otus.homework;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.shell.standard.ShellComponent;
-import ru.otus.homework.service.QuestionService;
+
+import java.sql.SQLException;
 
 @SpringBootApplication
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws SQLException {
         SpringApplication.run(Main.class);
+
+//        Console.main(args);
     }
 }

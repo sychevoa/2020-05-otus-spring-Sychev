@@ -17,12 +17,13 @@ public class IOServiceConsole implements IOService {
     }
 
     @Override
-    public void out(String text) {
-        out.println(text);
+    public String read() {
+
+        return scanner.nextLine();
     }
 
     @Override
-    public String readTextFromConsole() {
-        return scanner.nextLine();
+    public void out(String text) {
+        out.println(text);
     }
 }
