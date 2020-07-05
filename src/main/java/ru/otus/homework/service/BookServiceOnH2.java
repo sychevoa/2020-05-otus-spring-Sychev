@@ -4,32 +4,90 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.stereotype.Service;
-import ru.otus.homework.dao.BookDao;
+import org.springframework.transaction.annotation.Transactional;
+import ru.otus.homework.model.Comment;
+import ru.otus.homework.repository.BookRepositoryJpa;
+import ru.otus.homework.model.Author;
 import ru.otus.homework.model.Book;
+import ru.otus.homework.model.Genre;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @ShellComponent
 @RequiredArgsConstructor
 public class BookServiceOnH2 implements BookService {
 
-    private final BookDao dao;
+    private final BookRepositoryJpa repo;
     private final IOService ioService;
 
     @Override
+    @Transactional(readOnly = true)
     @ShellMethod(value = "Count books", key = "count")
-    public int countAllBooks() {
+    public long countAllBooks() {
 
-        return dao.countBooks();
+        return repo.countBooks();
     }
 
     @Override
+    @Transactional
     @ShellMethod(value = "Add book", key = "add")
     public String insertBook() {
         Book book = askAttributesCreateAndGetBook();
+        Book addedBook = repo.insertBook(book);
 
-        return dao.insertBook(book) == 1 ? "Book added!" : "An error has occurred";
+        return "Book " + addedBook.getTitle() + " added";
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    @ShellMethod(value = "Find book by id", key = "get book")
+    public Book findBookById(long id) {
+        Optional<Book> bookById = repo.getBookById(id);
+
+        if (bookById.isEmpty()) {
+            ioService.out("Book not found");
+            return null;
+        }
+        return bookById.get();
+    }
+
+    @Override
+    @Transactional
+    @ShellMethod(value = "Delete book", key = "delete book")
+    public String deleteBookByTitle(String title) {
+
+        return repo.deleteBookByTitle(title) == 1 ? "Book deleted :'(" : "Book not found";
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    @ShellMethod(value = "Get book by title", key = "get title")
+    public Book findBookByTitle(String title) {
+        Optional<Book> bookByTitle = repo.getBookByTitle(title);
+
+        if (bookByTitle.isEmpty()) {
+            ioService.out("Book not found");
+            return null;
+        }
+        return bookByTitle.get();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    @ShellMethod(value = "All books", key = "all books")
+    public List<Book> getAllBooks() {
+
+        return repo.getAllBooks();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    @ShellMethod(value = "Get books by genre", key = "all genre")
+    public List<Book> getAllBooksByGenre(String genre) {
+
+        return repo.getAllBooksByGenre(genre);
     }
 
     private Book askAttributesCreateAndGetBook() {
@@ -42,44 +100,23 @@ public class BookServiceOnH2 implements BookService {
         ioService.out("Enter the second name of the author of book");
         String secondName = ioService.read();
         ioService.out("Enter a book genre");
-        String genre = ioService.read();
+        String genreDesc = ioService.read();
+        ioService.out("Enter a comment");
+        String commentAsString = ioService.read();
         book.setTitle(title);
-        book.setAuthorFirstName(firstName);
-        book.setAuthorSecondName(secondName);
+
+        Author author = new Author();
+        author.setFirstName(firstName);
+        author.setSecondName(secondName);
+        book.setAuthor(author);
+
+        Genre genre = new Genre();
+        genre.setDescription(genreDesc);
         book.setGenre(genre);
 
+        Comment comment = new Comment();
+        comment.setText(commentAsString);
+
         return book;
-    }
-
-    @Override
-    @ShellMethod(value = "Delete book", key = "delete")
-    public String deleteBookByTitle(String title) {
-
-        return dao.deleteBookByTitle(title) == 1 ? "Book deleted :'(" : "Book not found";
-    }
-
-    @Override
-    @ShellMethod(value = "Get book by title", key = "get title")
-    public Book findBookByTitle(String title) {
-        Book book = dao.getBookByTitle(title);
-
-        if (book == null) {
-            ioService.out("Book not found");
-        }
-        return book;
-    }
-
-    @Override
-    @ShellMethod(value = "All books", key = "all")
-    public List<Book> getAllBooks() {
-
-        return dao.getAllBooks();
-    }
-
-    @Override
-    @ShellMethod(value = "Get books by genre", key = "all genres")
-    public List<Book> getAllBooksByGenre(String genre) {
-
-        return dao.getAllBooksByGenre(genre);
     }
 }
