@@ -11,7 +11,9 @@ import ru.otus.homework.model.Comment;
 import ru.otus.homework.repository.CommentRepositoryJpa;
 import ru.otus.homework.repository.CommentRepositoryJpaImpl;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -25,6 +27,9 @@ public class CommentRepositoryJpaImplTest {
 
     @Autowired
     private TestEntityManager testManager;
+
+    private final static String COMMENT = "new comment about book";
+    private final static long BOOK_ID = 1L;
 
     @Test
     @DisplayName("искать комментарий по id")
@@ -49,15 +54,15 @@ public class CommentRepositoryJpaImplTest {
     @Test
     @DisplayName("добавлять новый комментарий к книге")
     void shouldInsertComment() {
-        String commentText = "new comment about book";
-        long bookId = 1L;
+        Comment comment = new Comment();
+        Book book = testManager.find(Book.class, BOOK_ID);
+        comment.setText(COMMENT);
+        comment.setBook(book);
 
-        repo.addComment(bookId, commentText);
-        Book returnedBook = testManager.find(Book.class, bookId);
+        Comment returnedComment = repo.addComment(comment);
 
-        assertThat(returnedBook.getComments())
-                .filteredOn("text", commentText)
-                .hasSize(1);
+        assertThat(returnedComment.getBook())
+                .isEqualToComparingFieldByField(book);
     }
 
     @Test
@@ -67,4 +72,17 @@ public class CommentRepositoryJpaImplTest {
         assertThat(repo.allComment()).hasSize(9);
     }
 
+    @Test
+    @DisplayName("возвращать возвращать комментарии по id книги")
+    void shouldReturnExpectedCommentByBookId() {
+        Book book = testManager.find(Book.class, BOOK_ID);
+
+        List<Comment> commentsByBookId = repo.getCommentsByBookId(book.getId());
+        List<String> collect = commentsByBookId
+                .stream()
+                .map(Comment::getText)
+                .collect(Collectors.toList());
+
+        assertThat(collect).hasSize(2).containsOnly("some cool comment", "some bad comment");
+    }
 }

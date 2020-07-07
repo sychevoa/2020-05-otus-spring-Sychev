@@ -1,9 +1,10 @@
 package ru.otus.homework.model;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -19,22 +20,17 @@ public class Book {
     private String title;
 
     @JoinColumn(name = "author_id", referencedColumnName = "id")
-    @ManyToOne(targetEntity = Author.class, cascade = CascadeType.ALL)
+    @ManyToOne(targetEntity = Author.class)
     private Author author;
 
     @JoinColumn(name = "genre_id", referencedColumnName = "id")
-    @ManyToOne(targetEntity = Genre.class, cascade = CascadeType.ALL)
+    @ManyToOne(targetEntity = Genre.class)
     private Genre genre;
-
-    @JoinColumn(name = "book_id", referencedColumnName = "id")
-    @OneToMany(targetEntity = Comment.class, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private List<Comment> comments;
 
     @Override
     public String toString() {
-        return "Book: " + title +
+        return "Book(" + id + "): " + title +
                 ", author: " + author +
-                ", genre: " + genre +
-                ", comment: " + comments;
+                ", genre: " + genre;
     }
 }

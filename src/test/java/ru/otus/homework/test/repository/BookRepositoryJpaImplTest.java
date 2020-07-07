@@ -8,13 +8,11 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.Import;
 import ru.otus.homework.model.Author;
 import ru.otus.homework.model.Book;
-import ru.otus.homework.model.Comment;
 import ru.otus.homework.model.Genre;
 import ru.otus.homework.repository.BookRepositoryJpa;
 import ru.otus.homework.repository.BookRepositoryJpaImpl;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -41,13 +39,22 @@ class BookRepositoryJpaImplTest {
     @Test
     @DisplayName("добавлять новую книгу в БД")
     void shouldInsertBook() {
-        Author author = new Author(10L, "John", "Connor");
-        Genre genre = new Genre(10L, "fantastic");
-        List<Comment> comments = List.of(new Comment(10L,"comment about book"));
+        Author author = new Author();
+        author.setFirstName("John");
+        author.setSecondName("Connor");
+        testManager.persist(author);
 
-        Book addedBook = new Book(7L, "How to cook Terminator",  author, genre, comments);
-        repo.insertBook(addedBook);
-        Book returnedBook = testManager.find(Book.class, 7L);
+        Genre genre = new Genre();
+        genre.setDescription("fantastic");
+        testManager.persist(genre);
+
+        Book addedBook = new Book();
+        addedBook.setTitle("How to cook Terminator");
+        addedBook.setAuthor(author);
+        addedBook.setGenre(genre);
+
+        Book book = repo.addBook(addedBook);
+        Book returnedBook = testManager.find(Book.class, book.getId());
 
         assertThat(addedBook.getTitle()).isEqualTo(returnedBook.getTitle());
     }
@@ -55,10 +62,10 @@ class BookRepositoryJpaImplTest {
     @Test
     @DisplayName("искать книгу по id")
     void shouldReturnExpectedBookById() {
-        Optional<Book> actualBook = repo.getBookById(6L);
+        Book actualBook = repo.getBookById(6L);
         Book expectedBook = testManager.find(Book.class, 6L);
 
-        assertThat(actualBook).isPresent().get()
+        assertThat(actualBook)
                 .isEqualToComparingFieldByField(expectedBook);
     }
 
@@ -73,25 +80,12 @@ class BookRepositoryJpaImplTest {
     }
 
     @Test
-    @DisplayName("удалять книгу по названию")
-    void shouldDeleteBookByTitle() {
-        String title = "War and Peace";
-        Optional<Book> bookBeforeDelete = repo.getBookByTitle(title);
-        repo.deleteBookByTitle(title);
-        Optional<Book> bookAfterDelete = repo.getBookByTitle(title);
-
-        assertThat(bookBeforeDelete).isPresent();
-        assertThat(bookAfterDelete).isEmpty();
-    }
-
-    @Test
     @DisplayName("искать книгу по названию")
     void shouldReturnExpectedBookByTitle() {
-        Optional<Book> optionalBook = repo.getBookByTitle("Jane Eyre");
+        List<Book> books = repo.getBookByTitle("Jane Eyre");
         Author author = testManager.find(Author.class, 2L);
 
-        assertThat(optionalBook).isPresent().get()
-                .hasFieldOrPropertyWithValue("author", author);
+        assertThat(books.get(0)).hasFieldOrPropertyWithValue("author", author);
     }
 
     @Test

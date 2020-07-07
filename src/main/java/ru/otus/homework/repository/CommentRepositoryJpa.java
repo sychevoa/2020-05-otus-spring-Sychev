@@ -8,9 +8,11 @@ import java.util.Optional;
 public interface CommentRepositoryJpa {
     Optional<Comment> getCommentById(long id);
 
-    int deleteCommentById(long id);
+    List<Comment> getCommentsByBookId(long bookId);
+
+    void deleteCommentById(long id);
 
     List<Comment> allComment();
 
-    Optional<Comment> addComment(long bookId, String text);
+    Comment addComment(Comment comment);
 }

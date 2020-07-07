@@ -7,13 +7,15 @@ import java.util.List;
 public interface BookService {
     long countAllBooks();
 
-    String insertBook();
+    String addBook();
 
-    Book findBookById(long id);
+    String getBookById(long id);
 
     String deleteBookByTitle(String title);
 
-    Book findBookByTitle(String title);
+    String deleteBookById(long id);
+
+    List<Book> getBookByTitle(String title);
 
     List<Book> getAllBooks();
 

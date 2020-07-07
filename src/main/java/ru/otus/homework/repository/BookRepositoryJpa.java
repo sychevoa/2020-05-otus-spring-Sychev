@@ -1,21 +1,19 @@
 package ru.otus.homework.repository;
 
+import ru.otus.homework.exception.BookNotFoundException;
 import ru.otus.homework.model.Book;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface BookRepositoryJpa {
 
-    Book insertBook(Book newBook);
+    Book addBook(Book newBook);
 
-    Optional<Book> getBookById(long id);
+    Book getBookById(long id);
 
-    int deleteBookById(long id);
+    void deleteBookById(long id) throws BookNotFoundException;
 
-    Optional<Book> getBookByTitle(String title);
-
-    int deleteBookByTitle(String title);
+    List<Book> getBookByTitle(String title);
 
     List<Book> getAllBooksByGenre(String genre);
 

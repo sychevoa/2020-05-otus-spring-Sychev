@@ -1,11 +1,13 @@
 package ru.otus.homework.repository;
 
 import org.springframework.stereotype.Repository;
+import ru.otus.homework.exception.BookNotFoundException;
 import ru.otus.homework.model.Book;
 
-import javax.persistence.*;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public class BookRepositoryJpaImpl implements BookRepositoryJpa {
@@ -14,41 +16,31 @@ public class BookRepositoryJpaImpl implements BookRepositoryJpa {
     private EntityManager manager;
 
     @Override
-    public Optional<Book> getBookById(long id) {
+    public Book getBookById(long id) {
 
-        return Optional.ofNullable(manager.find(Book.class, id));
+        return manager.find(Book.class, id);
     }
 
     @Override
-    public int deleteBookById(long id) {
-        Query query = manager.createQuery("delete from Book b where b.id = :id");
-        query.setParameter("id", id);
-        return query.executeUpdate();
+    public void deleteBookById(long id) {
+        Book book = manager.find(Book.class, id);
+
+        if (book == null)
+            throw new BookNotFoundException("Book not found");
+
+        manager.remove(book);
     }
 
-
     @Override
-    public Optional<Book> getBookByTitle(String title) {
+    public List<Book> getBookByTitle(String title) {
         TypedQuery<Book> query = manager.createQuery("select b from Book b where b.title = :title", Book.class);
         query.setParameter("title", title);
 
-        try {
-            return Optional.of(query.getSingleResult());
-        } catch (NoResultException e) {
-            return Optional.empty();
-        }
+        return query.getResultList();
     }
 
     @Override
-    public int deleteBookByTitle(String title) {
-        Query query = manager.createQuery("delete from Book b where b.title = :title");
-        query.setParameter("title", title);
-
-        return query.executeUpdate();
-    }
-
-    @Override
-    public Book insertBook(Book book) {
+    public Book addBook(Book book) {
         if (book.getId() != null && book.getId() <= 0) {
             manager.persist(book);
             return book;

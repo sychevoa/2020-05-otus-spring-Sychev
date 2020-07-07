@@ -1,14 +1,12 @@
 package ru.otus.homework.repository;
 
 import org.springframework.stereotype.Repository;
-import ru.otus.homework.model.Book;
+import ru.otus.homework.exception.CommentNotFoundException;
 import ru.otus.homework.model.Comment;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
 import javax.persistence.TypedQuery;
-import javax.validation.constraints.Null;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,11 +23,22 @@ public class CommentRepositoryJpaImpl implements CommentRepositoryJpa {
     }
 
     @Override
-    public int deleteCommentById(long id) {
-        Query query = manager.createQuery("delete from Comment c where c.id = :id");
-        query.setParameter("id", id);
+    public List<Comment> getCommentsByBookId(long bookId) {
+        TypedQuery<Comment> query = manager.createQuery("select c from Comment c " +
+                "where c.book.id = :bookId", Comment.class);
+        query.setParameter("bookId", bookId);
 
-        return query.executeUpdate();
+        return query.getResultList();
+    }
+
+    @Override
+    public void deleteCommentById(long id) {
+        Comment comment = manager.find(Comment.class, id);
+
+        if (comment == null)
+            throw new CommentNotFoundException("Comment not found");
+
+        manager.remove(comment);
     }
 
     @Override
@@ -40,23 +49,12 @@ public class CommentRepositoryJpaImpl implements CommentRepositoryJpa {
     }
 
     @Override
-    public Optional<Comment> addComment(long bookId, String text) {
-        Book book;
-        book = manager.find(Book.class, bookId);
-
-        if (book == null) {
-            return Optional.empty();
+    public Comment addComment(Comment comment) {
+        if (comment.getId() != null && comment.getId() <= 0) {
+            manager.persist(comment);
+            return comment;
+        } else {
+            return manager.merge(comment);
         }
-
-        List<Comment> comments = book.getComments();
-        Comment comment = new Comment();
-        comment.setText(text);
-
-        manager.persist(comment);
-        comments.add(comment);
-        book.setComments(comments);
-
-        manager.merge(book);
-        return Optional.of(comment);
     }
 }

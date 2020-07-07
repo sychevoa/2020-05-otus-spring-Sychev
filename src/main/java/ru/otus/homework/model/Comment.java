@@ -19,8 +19,12 @@ public class Comment {
     @Column(name = "text")
     private String text;
 
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "book_id")
+    private Book book;
+
     @Override
     public String toString() {
-        return id + ": " + text;
+        return text + " (" + id + ")";
     }
 }
