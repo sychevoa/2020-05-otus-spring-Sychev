@@ -5,7 +5,6 @@ import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.otus.homework.exception.CommentNotFoundException;
 import ru.otus.homework.model.Book;
 import ru.otus.homework.model.Comment;
 import ru.otus.homework.repository.BookRepositoryJpa;
@@ -27,7 +26,7 @@ public class CommentServiceOnH2 implements CommentService {
     @Transactional(readOnly = true)
     @ShellMethod(value = "Find comment by id", key = "get comment id")
     public Comment getCommentById(long id) {
-        Optional<Comment> commentById = commentRepo.getCommentById(id);
+        Optional<Comment> commentById = commentRepo.findById(id);
 
         if (commentById.isEmpty()) {
             ioService.out("Comment not found");
@@ -40,11 +39,10 @@ public class CommentServiceOnH2 implements CommentService {
     @Transactional
     @ShellMethod(value = "Delete comment by id", key = "delete comment")
     public String deleteCommentById(long id) {
-        try {
-            commentRepo.deleteCommentById(id);
-        } catch (CommentNotFoundException e) {
-            return e.getMessage();
+        if (!commentRepo.existsById(id)) {
+            return "Comment not found";
         }
+        commentRepo.deleteById(id);
 
         return "Comment deleted";
     }
@@ -53,17 +51,17 @@ public class CommentServiceOnH2 implements CommentService {
     @Transactional
     @ShellMethod(value = "Add comment", key = "add comment")
     public String addComment(long bookId, String text) {
-        Book book = bookRepo.getBookById(bookId);
+        Optional<Book> bookOptional = bookRepo.findById(bookId);
 
-        if (book == null) {
+        if (bookOptional.isEmpty()) {
             return "book to add comment not found";
         }
 
         Comment comment = new Comment();
         comment.setText(text);
-        comment.setBook(book);
+        comment.setBook(bookOptional.get());
 
-        Comment commentSaved = commentRepo.addComment(comment);
+        Comment commentSaved = commentRepo.save(comment);
         return String.format("Comment with id: %s was added", commentSaved.getId());
     }
 
@@ -72,16 +70,14 @@ public class CommentServiceOnH2 implements CommentService {
     @ShellMethod(value = "Get all comments", key = "all comments")
     public List<Comment> getAllComments() {
 
-        return commentRepo.allComment();
+        return commentRepo.findAll();
     }
 
     @Override
     @Transactional(readOnly = true)
-    @ShellMethod(value = "Get comment by bookId", key = "get comment bookId")
+    @ShellMethod(value = "Get comment by bookId", key = "get comments bookId")
     public List<Comment> getCommentsByBookId(long bookId) {
-        //И давайте на экран выведем все комменты к книге не обращаясь за ними в репозиторий
-
-        List<Comment> comments = commentRepo.getCommentsByBookId(bookId);
+        List<Comment> comments = commentRepo.findAllByBookId(bookId);
 
         if (comments.isEmpty()) {
             ioService.out("Comments not found");

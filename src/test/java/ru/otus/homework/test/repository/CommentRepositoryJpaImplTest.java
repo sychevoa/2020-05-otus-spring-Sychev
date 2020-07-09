@@ -5,11 +5,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-import org.springframework.context.annotation.Import;
 import ru.otus.homework.model.Book;
 import ru.otus.homework.model.Comment;
 import ru.otus.homework.repository.CommentRepositoryJpa;
-import ru.otus.homework.repository.CommentRepositoryJpaImpl;
 
 import java.util.List;
 import java.util.Optional;
@@ -19,7 +17,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
 @DisplayName("Comment jpa репозиторий должен: ")
-@Import(CommentRepositoryJpaImpl.class)
 public class CommentRepositoryJpaImplTest {
 
     @Autowired
@@ -34,7 +31,7 @@ public class CommentRepositoryJpaImplTest {
     @Test
     @DisplayName("искать комментарий по id")
     void shouldReturnExpectedCommentById() {
-        Optional<Comment> actualComment = repo.getCommentById(5L);
+        Optional<Comment> actualComment = repo.findById(5L);
         Comment expectedComment = testManager.find(Comment.class, 5L);
 
         assertThat(actualComment).isPresent().get()
@@ -44,9 +41,9 @@ public class CommentRepositoryJpaImplTest {
     @Test
     @DisplayName("удалять комментарий по id")
     void shouldDeleteCommentById() {
-        long countBeforeDelete = repo.allComment().size();
-        repo.deleteCommentById(2L);
-        long countAfterDelete = repo.allComment().size();
+        long countBeforeDelete = repo.count();
+        repo.deleteById(3L);
+        long countAfterDelete = repo.count();
 
         assertThat(countBeforeDelete).isEqualTo(countAfterDelete + 1);
     }
@@ -59,7 +56,7 @@ public class CommentRepositoryJpaImplTest {
         comment.setText(COMMENT);
         comment.setBook(book);
 
-        Comment returnedComment = repo.addComment(comment);
+        Comment returnedComment = repo.save(comment);
 
         assertThat(returnedComment.getBook())
                 .isEqualToComparingFieldByField(book);
@@ -69,7 +66,7 @@ public class CommentRepositoryJpaImplTest {
     @DisplayName("возвращать правильное количество комментариев из БД")
     void shouldReturnCorrectCountComment() {
 
-        assertThat(repo.allComment()).hasSize(9);
+        assertThat(repo.findAll()).hasSize(9);
     }
 
     @Test
@@ -77,7 +74,7 @@ public class CommentRepositoryJpaImplTest {
     void shouldReturnExpectedCommentByBookId() {
         Book book = testManager.find(Book.class, BOOK_ID);
 
-        List<Comment> commentsByBookId = repo.getCommentsByBookId(book.getId());
+        List<Comment> commentsByBookId = repo.findAllByBookId(book.getId());
         List<String> collect = commentsByBookId
                 .stream()
                 .map(Comment::getText)
