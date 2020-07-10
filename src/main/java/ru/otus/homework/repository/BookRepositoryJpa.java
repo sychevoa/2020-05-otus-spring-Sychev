@@ -15,8 +15,6 @@ public interface BookRepositoryJpa {
 
     List<Book> getBookByTitle(String title);
 
-    List<Book> getAllBooksByGenre(String genre);
-
     long countBooks();
 
     List<Book> getAllBooks();

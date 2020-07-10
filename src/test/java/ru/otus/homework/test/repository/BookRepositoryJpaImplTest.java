@@ -88,14 +88,14 @@ class BookRepositoryJpaImplTest {
         assertThat(books.get(0)).hasFieldOrPropertyWithValue("author", author);
     }
 
-    @Test
-    @DisplayName("возвращать все имеющиеся книги по жанру")
-    void shouldReturnAllBooksByGenre() {
-        List<Book> books = repo.getAllBooksByGenre("detective");
-        Book detective = testManager.find(Book.class, 3L);
-
-        assertThat(books).containsOnly(detective);
-    }
+//    @Test
+//    @DisplayName("возвращать все имеющиеся книги по жанру")
+//    void shouldReturnAllBooksByGenre() {
+//        List<Book> books = repo.getAllBooksByGenre("detective");
+//        Book detective = testManager.find(Book.class, 3L);
+//
+//        assertThat(books).containsOnly(detective);
+//    }
 
     @Test
     @DisplayName("возвращать все имеющиеся книги")

@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -18,6 +19,10 @@ public class Genre {
 
     @Column(name = "description")
     private String description;
+
+    @OneToMany(targetEntity = Book.class, fetch = FetchType.LAZY)
+    @JoinColumn(name = "book_id")
+    private List<Book> book;
 
     @Override
     public String toString() {

@@ -19,7 +19,7 @@ public class CommentTest {
     @DisplayName("корректно создается конструктором")
     public void shouldHaveCorrectConstructor() {
         Author author = new Author(1L, "Jane", "Austen");
-        Genre genre = new Genre(1L, "novel");
+        Genre genre = new Genre();
 
         Book book = new Book(1L, BOOK_TITLE, author, genre);
         Comment comment = new Comment(1L, COMMENT, book);

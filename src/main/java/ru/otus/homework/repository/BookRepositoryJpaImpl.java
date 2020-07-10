@@ -50,15 +50,6 @@ public class BookRepositoryJpaImpl implements BookRepositoryJpa {
     }
 
     @Override
-    public List<Book> getAllBooksByGenre(String genreAsString) {
-        TypedQuery<Book> query = manager.createQuery("select b from Book b " +
-                "join b.genre g where g.description = :genre", Book.class);
-        query.setParameter("genre", genreAsString);
-
-        return query.getResultList();
-    }
-
-    @Override
     public long countBooks() {
         TypedQuery<Long> query = manager.createQuery("select count (b) from Book b", Long.class);
 

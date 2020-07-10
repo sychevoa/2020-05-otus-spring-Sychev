@@ -2,7 +2,10 @@ package ru.otus.homework.test.model;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import ru.otus.homework.model.Book;
 import ru.otus.homework.model.Genre;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -14,7 +17,7 @@ public class GenreTest {
     @Test
     @DisplayName("корректно создается конструктором")
     public void shouldHaveCorrectConstructor() {
-        Genre genre = new Genre(1L, GENRE);
+        Genre genre = new Genre(1L, GENRE, List.of(new Book()));
 
         assertThat(genre).hasFieldOrPropertyWithValue("description", GENRE);
     }

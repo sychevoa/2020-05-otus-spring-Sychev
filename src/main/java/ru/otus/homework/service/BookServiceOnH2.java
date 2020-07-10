@@ -14,6 +14,7 @@ import ru.otus.homework.repository.BookRepositoryJpa;
 import ru.otus.homework.repository.CommentRepositoryJpa;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @ShellComponent
@@ -114,8 +115,11 @@ public class BookServiceOnH2 implements BookService {
     @Transactional(readOnly = true)
     @ShellMethod(value = "Get books by genre", key = "all genre")
     public List<Book> getAllBooksByGenre(String genre) {
+        List<Book> allBooks = bookRepo.getAllBooks();
 
-        return bookRepo.getAllBooksByGenre(genre);
+        return allBooks.stream()
+                .filter(book -> book.getGenre().getDescription().equalsIgnoreCase(genre))
+                .collect(Collectors.toList());
     }
 
     private Book askAttributesCreateAndGetBook() {

@@ -79,8 +79,6 @@ public class CommentServiceOnH2 implements CommentService {
     @Transactional(readOnly = true)
     @ShellMethod(value = "Get comment by bookId", key = "get comment bookId")
     public List<Comment> getCommentsByBookId(long bookId) {
-        //И давайте на экран выведем все комменты к книге не обращаясь за ними в репозиторий
-
         List<Comment> comments = commentRepo.getCommentsByBookId(bookId);
 
         if (comments.isEmpty()) {
