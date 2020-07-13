@@ -1,6 +1,7 @@
 package ru.otus.homework.service;
 
 import lombok.RequiredArgsConstructor;
+import org.hibernate.Hibernate;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.stereotype.Service;
@@ -12,9 +13,9 @@ import ru.otus.homework.model.Comment;
 import ru.otus.homework.model.Genre;
 import ru.otus.homework.repository.BookRepositoryJpa;
 import ru.otus.homework.repository.CommentRepositoryJpa;
+import ru.otus.homework.repository.GenreRepositoryJpa;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @ShellComponent
@@ -23,6 +24,7 @@ public class BookServiceOnH2 implements BookService {
 
     private final BookRepositoryJpa bookRepo;
     private final CommentRepositoryJpa commentRepo;
+    private final GenreRepositoryJpa genreRepo;
     private final IOService ioService;
 
     @Override
@@ -114,12 +116,12 @@ public class BookServiceOnH2 implements BookService {
     @Override
     @Transactional(readOnly = true)
     @ShellMethod(value = "Get books by genre", key = "all genre")
-    public List<Book> getAllBooksByGenre(String genre) {
-        List<Book> allBooks = bookRepo.getAllBooks();
+    public List<Book> getAllBooksByGenre(long id) {
+        Genre genre = genreRepo.getGenreById(id);
+        List<Book> books = genre.getBooks();
+        Hibernate.initialize(books);
 
-        return allBooks.stream()
-                .filter(book -> book.getGenre().getDescription().equalsIgnoreCase(genre))
-                .collect(Collectors.toList());
+        return books;
     }
 
     private Book askAttributesCreateAndGetBook() {

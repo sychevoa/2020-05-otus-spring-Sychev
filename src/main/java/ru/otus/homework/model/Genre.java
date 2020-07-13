@@ -21,8 +21,8 @@ public class Genre {
     private String description;
 
     @OneToMany(targetEntity = Book.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "book_id")
-    private List<Book> book;
+    @JoinColumn(name = "genre_id")
+    private List<Book> books;
 
     @Override
     public String toString() {
