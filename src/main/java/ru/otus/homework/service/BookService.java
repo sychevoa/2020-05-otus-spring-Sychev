@@ -5,15 +5,19 @@ import ru.otus.homework.model.Book;
 import java.util.List;
 
 public interface BookService {
-    int countAllBooks();
+    long countAllBooks();
 
-    String insertBook();
+    String addBook();
+
+    String getBookById(long id);
 
     String deleteBookByTitle(String title);
 
-    Book findBookByTitle(String title);
+    String deleteBookById(long id);
+
+    List<Book> getBookByTitle(String title);
 
     List<Book> getAllBooks();
 
-    List<Book> getAllBooksByGenre(String genre);
+    List<Book> getAllBooksByGenre(long id);
 }
