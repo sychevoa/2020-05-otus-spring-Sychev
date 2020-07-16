@@ -10,6 +10,7 @@ import ru.otus.homework.model.Comment;
 import ru.otus.homework.repository.BookRepositoryJpa;
 import ru.otus.homework.repository.CommentRepositoryJpa;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -81,7 +82,7 @@ public class CommentServiceOnH2 implements CommentService {
 
         if (comments.isEmpty()) {
             ioService.out("Comments not found");
-            return null;
+            return Collections.emptyList();
         }
 
         return comments;

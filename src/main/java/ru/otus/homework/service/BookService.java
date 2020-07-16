@@ -19,5 +19,5 @@ public interface BookService {
 
     List<Book> getAllBooks();
 
-    List<Book> getAllBooksByGenre(String genre);
+    List<Book> getAllBooksByGenre(long id);
 }

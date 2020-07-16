@@ -1,6 +1,7 @@
 package ru.otus.homework.service;
 
 import lombok.RequiredArgsConstructor;
+import org.hibernate.Hibernate;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.stereotype.Service;
@@ -14,6 +15,7 @@ import ru.otus.homework.repository.BookRepositoryJpa;
 import ru.otus.homework.repository.CommentRepositoryJpa;
 import ru.otus.homework.repository.GenreRepositoryJpa;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -117,9 +119,17 @@ public class BookServiceOnH2 implements BookService {
     @Override
     @Transactional(readOnly = true)
     @ShellMethod(value = "Get books by genre", key = "all genre")
-    public List<Book> getAllBooksByGenre(String genre) {
+    public List<Book> getAllBooksByGenre(long id) {
+        Optional<Genre> optionalGenre = genreRepo.findById(id);
 
-        return bookRepo.findAllByGenre_Description(genre);
+        if (optionalGenre.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        List<Book> books = optionalGenre.get().getBooks();
+        Hibernate.initialize(books);
+
+        return books;
     }
 
     private Book askAttributesCreateAndGetBook() {
