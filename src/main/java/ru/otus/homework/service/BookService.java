@@ -9,15 +9,15 @@ public interface BookService {
 
     String addBook();
 
-    String getBookById(long id);
+    String getBookById(String id);
 
     String deleteBookByTitle(String title);
 
-    String deleteBookById(long id);
+    String deleteBookById(String id);
 
     List<Book> getBookByTitle(String title);
 
     List<Book> getAllBooks();
 
-    List<Book> getAllBooksByGenre(long id);
+    List<Book> getAllBooksByGenre(String id);
 }
