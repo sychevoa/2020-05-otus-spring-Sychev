@@ -14,7 +14,7 @@ import ru.otus.homework.model.Book;
 import ru.otus.homework.model.Comment;
 import ru.otus.homework.model.Genre;
 import ru.otus.homework.service.BookService;
-import ru.otus.homework.service.CreateBookService;
+import ru.otus.homework.service.CreateBookServiceConsole;
 import ru.otus.homework.service.IOService;
 
 import java.util.List;
@@ -35,7 +35,7 @@ public class BookServiceTest {
     private BookService bookservice;
 
     @MockBean
-    private CreateBookService createBookServiceMock;
+    private CreateBookServiceConsole createBookServiceMock;
 
     @MockBean
     private IOService ioServiceMock;

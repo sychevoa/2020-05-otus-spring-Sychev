@@ -17,7 +17,7 @@ import java.util.Optional;
 public class BookServiceMongo implements BookService {
 
     private final BookRepositoryMongo bookRepo;
-    private final CreateBookService createBookService;
+    private final CreateBookServiceConsole createBookService;
     private final IOService ioService;
 
     @Override
