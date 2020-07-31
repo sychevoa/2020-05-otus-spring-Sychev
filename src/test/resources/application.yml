@@ -1,13 +1,13 @@
 spring:
-  datasource:
-    url: jdbc:h2:mem:testdb
-    data: data-test.sql
-    initialization-mode: always
+  data:
+    mongodb:
+      port: 0
+      database: testdb
+  mongock:
+    change-logs-scan-package:
+      - ru.otus.homework.test.changelogs
+
   shell:
     interactive:
       enabled: false
-  jpa:
-    generate-ddl: false
-    hibernate:
-      ddl-auto: none
-    show-sql: false
+

@@ -3,34 +3,36 @@ package ru.otus.homework.model;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-import javax.persistence.*;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
-@Table(name = "books")
+@Document(collection = "books")
 public class Book {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id;
 
-    @Column(name = "title", nullable = false, unique = true)
     private String title;
-
-    @JoinColumn(name = "author_id", referencedColumnName = "id")
-    @ManyToOne(targetEntity = Author.class)
     private Author author;
-
-    @JoinColumn(name = "genre_id", referencedColumnName = "id")
-    @ManyToOne(targetEntity = Genre.class)
     private Genre genre;
+    private List<Comment> comments;
+
+    public Book(String title, Author author, Genre genre, List<Comment> comments) {
+        this.title = title;
+        this.author = author;
+        this.genre = genre;
+        this.comments = comments;
+    }
 
     @Override
     public String toString() {
         return "Book(" + id + "): " + title +
                 ", author: " + author +
-                ", genre: " + genre;
+                ", genre: " + genre +
+                ", comments: " + comments;
     }
 }

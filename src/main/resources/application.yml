@@ -1,14 +1,13 @@
 spring:
-  datasource:
-    url: jdbc:h2:mem:testdb
-    initialization-mode: always
-
-  jpa:
-    generate-ddl: false
-    hibernate:
-      ddl-auto: none
-    show-sql: true
+  data:
+    mongodb:
+      authentication-database: no
+      port: 27017
+      host: localhost
+      database: library
 
 logging:
   level:
     ROOT: WARN
+
+

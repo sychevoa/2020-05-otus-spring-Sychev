@@ -5,13 +5,13 @@ import ru.otus.homework.model.Comment;
 import java.util.List;
 
 public interface CommentService {
-    Comment getCommentById(long id);
+    Comment getCommentById(String id);
 
-    String deleteCommentById(long id);
+    String deleteCommentById(String id);
 
-    String addComment(long bookId, String text);
+    String addComment(String bookId, String text);
 
     List<Comment> getAllComments();
 
-    List<Comment> getCommentsByBookId(long bookId);
+    List<Comment> getCommentsByBookId(String bookId);
 }
